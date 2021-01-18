@@ -4,7 +4,7 @@ Go to Magento2 root folder
 
 Enter following command to install module:
 
-`composer require pstk/paystack-magento2-module`
+`composer require yexk/thirdpay-magento2-module`
 
 Wait while dependencies are updated.
 
