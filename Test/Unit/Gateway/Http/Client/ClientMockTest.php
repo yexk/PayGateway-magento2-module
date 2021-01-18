@@ -7,9 +7,9 @@ namespace Magento\SamplePaymentProvider\Test\Unit\Gateway\Http\Client;
 
 use Magento\Payment\Gateway\Http\TransferInterface;
 use Magento\Payment\Model\Method\Logger;
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 
-class ClientMockTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends \PHPUnit_Framework_TestCase
 {
     const TXN_ID = 'fcd7f001e9274fdefb14bff91c799306';
 
@@ -19,16 +19,16 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
-     * @var ClientMock|\PHPUnit_Framework_MockObject_MockObject
+     * @var Client|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $clientMock;
+    private $Client;
 
     public function setUp()
     {
         $this->logger = $this->getMockBuilder(Logger::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->clientMock = $this->getMockBuilder(ClientMock::class)
+        $this->Client = $this->getMockBuilder(Client::class)
             ->setMethods(['generateTxnId'])
             ->setConstructorArgs([$this->logger])
             ->getMock();
@@ -52,7 +52,7 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
             ->method('getHeaders')
             ->willReturn($expectedHeaders);
 
-        $this->clientMock->expects(static::once())
+        $this->Client->expects(static::once())
             ->method('generateTxnId')
             ->willReturn(self::TXN_ID);
 
@@ -67,7 +67,7 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             $expectedResponse,
-            $this->clientMock->placeRequest($transferObject)
+            $this->Client->placeRequest($transferObject)
         );
     }
 
@@ -83,11 +83,11 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
                     'INVOICE' => 1000
                 ],
                 'expectedResponse' => [
-                    'RESULT_CODE' => ClientMock::SUCCESS,
+                    'RESULT_CODE' => Client::SUCCESS,
                     'TXN_ID' => self::TXN_ID
                 ],
                 'expectedHeaders' => [
-                    'force_result' => ClientMock::SUCCESS
+                    'force_result' => Client::SUCCESS
                 ]
             ],
             'fraud' => [
@@ -96,7 +96,7 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
                     'INVOICE' => 1000
                 ],
                 'expectedResponse' => [
-                    'RESULT_CODE' => ClientMock::FAILURE,
+                    'RESULT_CODE' => Client::FAILURE,
                     'TXN_ID' => self::TXN_ID,
                     'FRAUD_MSG_LIST' => [
                         'Stolen card',
@@ -104,7 +104,7 @@ class ClientMockTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 'expectedHeaders' => [
-                    'force_result' => ClientMock::FAILURE
+                    'force_result' => Client::FAILURE
                 ]
             ]
         ];

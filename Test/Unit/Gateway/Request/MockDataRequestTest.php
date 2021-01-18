@@ -8,7 +8,7 @@ namespace YeThird\PayGateway\Test\Unit\Gateway\Request;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Sales\Model\Order\Payment;
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 use YeThird\PayGateway\Gateway\Request\MockDataRequest;
 
 class MockDataRequestTest extends \PHPUnit_Framework_TestCase
@@ -55,16 +55,16 @@ class MockDataRequestTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'forceResultCode' => ClientMock::SUCCESS,
+                'forceResultCode' => Client::SUCCESS,
                 'transactionResult' => null
             ],
             [
-                'forceResultCode' => ClientMock::SUCCESS,
-                'transactionResult' => ClientMock::SUCCESS
+                'forceResultCode' => Client::SUCCESS,
+                'transactionResult' => Client::SUCCESS
             ],
             [
-                'forceResultCode' => ClientMock::FAILURE,
-                'transactionResult' => ClientMock::FAILURE
+                'forceResultCode' => Client::FAILURE,
+                'transactionResult' => Client::FAILURE
             ]
         ];
     }

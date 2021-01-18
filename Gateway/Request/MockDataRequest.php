@@ -7,7 +7,7 @@ namespace YeThird\PayGateway\Gateway\Request;
 
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
 use Magento\Payment\Gateway\Request\BuilderInterface;
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 
 class MockDataRequest implements BuilderInterface
 {
@@ -34,7 +34,7 @@ class MockDataRequest implements BuilderInterface
         $transactionResult = $payment->getAdditionalInformation('transaction_result');
         return [
             self::FORCE_RESULT => $transactionResult === null
-                ? ClientMock::SUCCESS
+                ? Client::SUCCESS
                 : $transactionResult
         ];
     }

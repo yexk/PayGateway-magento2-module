@@ -7,7 +7,7 @@ namespace YeThird\PayGateway\Test\Unit\Gateway\Validator;
 
 use Magento\Payment\Gateway\Validator\ResultInterface;
 use Magento\Payment\Gateway\Validator\ResultInterfaceFactory;
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 use YeThird\PayGateway\Gateway\Validator\ResponseCodeValidator;
 
 class ResponseCodeValidatorTest extends \PHPUnit_Framework_TestCase
@@ -67,14 +67,14 @@ class ResponseCodeValidatorTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'fail_2' => [
-                'response' => [ResponseCodeValidator::RESULT_CODE => ClientMock::FAILURE],
+                'response' => [ResponseCodeValidator::RESULT_CODE => Client::FAILURE],
                 'expectationToResultCreation' => [
                     'isValid' => false,
                     'failsDescription' => [__('Gateway rejected the transaction.')]
                 ]
             ],
             'success' => [
-                'response' => [ResponseCodeValidator::RESULT_CODE => ClientMock::SUCCESS],
+                'response' => [ResponseCodeValidator::RESULT_CODE => Client::SUCCESS],
                 'expectationToResultCreation' => [
                     'isValid' => true,
                     'failsDescription' => []

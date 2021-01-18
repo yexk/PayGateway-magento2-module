@@ -10,7 +10,7 @@ use Magento\Framework\Event;
 use Magento\Payment\Model\InfoInterface;
 use Magento\Payment\Model\MethodInterface;
 use Magento\Payment\Observer\AbstractDataAssignObserver;
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 use YeThird\PayGateway\Observer\DataAssignObserver;
 
 class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
         $paymentInfoModel = $this->getMock(InfoInterface::class);
         $dataObject = new DataObject(
             [
-                'transaction_result' => ClientMock::SUCCESS
+                'transaction_result' => Client::SUCCESS
             ]
         );
 
@@ -51,7 +51,7 @@ class DataAssignObserverTest extends \PHPUnit_Framework_TestCase
             ->method('setAdditionalInformation')
             ->with(
                 'transaction_result',
-                ClientMock::SUCCESS
+                Client::SUCCESS
             );
 
         $observer = new DataAssignObserver();

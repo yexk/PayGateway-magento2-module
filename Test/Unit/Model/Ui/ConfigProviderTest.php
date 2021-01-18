@@ -5,7 +5,7 @@
  */
 namespace YeThird\PayGateway\Test\Unit\Model\Ui;
 
-use YeThird\PayGateway\Gateway\Http\Client\ClientMock;
+use YeThird\PayGateway\Gateway\Http\Client\Client;
 use YeThird\PayGateway\Model\Ui\ConfigProvider;
 
 class ConfigProviderTest extends \PHPUnit_Framework_TestCase
@@ -19,8 +19,8 @@ class ConfigProviderTest extends \PHPUnit_Framework_TestCase
                 'payment' => [
                     ConfigProvider::CODE => [
                         'transactionResults' => [
-                            ClientMock::SUCCESS => __('Success'),
-                            ClientMock::FAILURE => __('Fraud')
+                            Client::SUCCESS => __('Success'),
+                            Client::FAILURE => __('Fraud')
                         ]
                     ]
                 ]
