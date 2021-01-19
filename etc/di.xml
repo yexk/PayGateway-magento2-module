@@ -7,6 +7,9 @@
 -->
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- API -->
+    <preference for="YeThird\PayGateway\Api\PaymentManagementInterface" type="YeThird\PayGateway\Model\PaymentManagement"/>
+
     <!-- Payment Method Facade configuration -->
     <virtualType name="YeThirdPayGatewayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
