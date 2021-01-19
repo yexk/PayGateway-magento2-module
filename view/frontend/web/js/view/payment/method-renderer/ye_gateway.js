@@ -6,9 +6,25 @@
 /*global define*/
 define(
     [
-        'Magento_Checkout/js/view/payment/default'
+        "jquery",
+        'mage/url',
+        "Magento_Checkout/js/view/payment/default",
+        "Magento_Checkout/js/action/place-order",
+        "Magento_Checkout/js/model/payment/additional-validators",
+        "Magento_Checkout/js/model/quote",
+        "Magento_Checkout/js/model/full-screen-loader",
+        "Magento_Checkout/js/action/redirect-on-success",
     ],
-    function (Component) {
+    function (
+        $,
+        mageUrl,
+        Component,
+        placeOrderAction,
+        additionalValidators,
+        quote,
+        fullScreenLoader,
+        redirectOnSuccessAction
+        ) {
         'use strict';
 
         return Component.extend({
@@ -16,6 +32,8 @@ define(
                 template: 'YeThird_PayGateway/payment/form',
                 transactionResult: ''
             },
+            
+            redirectAfterPlaceOrder: false,
 
             initObservable: function () {
 
@@ -26,6 +44,23 @@ define(
                 return this;
             },
 
+            /**
+             * @override
+             */
+            afterPlaceOrder: function () {
+                console.log('=======data===>');
+                var checkoutConfig = window.checkoutConfig;
+                var paymentData = quote.billingAddress();
+                var paystackConfiguration = checkoutConfig.payment.ye_gateway;
+                var quoteId = checkoutConfig.quoteItemData[0].quote_id;
+                $.ajax({
+                    method: "GET",
+                    url: paystackConfiguration.api_url + "V1/yexk/verify/"+ quoteId
+                }).success(function (data) {
+                    data = JSON.parse(data);
+                    console.log(data);
+                });
+            },
             getCode: function() {
                 return 'ye_gateway';
             },
