@@ -10,4 +10,10 @@
     <event name="payment_method_assign_data">
         <observer name="sample_payment_gateway_data_assign" instance="YeThird\PayGateway\Observer\DataAssignObserver" />
     </event>
+    <event name="sales_order_place_before">
+        <observer name="YeThird_ObserverBeforeSalesOrderPlace" instance="YeThird\PayGateway\Observer\ObserverBeforeSalesOrderPlace"/>
+    </event>
+    <event name="ye_gateway_payment_verify_after">
+        <observer name="YeThird_ObserverAfterPaymentVerify" instance="YeThird\PayGateway\Observer\ObserverAfterPaymentVerify" />
+    </event>
 </config>

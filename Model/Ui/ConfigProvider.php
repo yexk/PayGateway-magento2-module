@@ -3,7 +3,6 @@
 namespace YeThird\PayGateway\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
-use YeThird\PayGateway\Gateway\Http\Client\Client;
 use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Store\Model\Store as Store;
 
@@ -33,10 +32,11 @@ final class ConfigProvider implements ConfigProviderInterface
             'payment' => [
                 self::CODE => [
                     'transactionResults' => [
-                        Client::SUCCESS => __('Success'),
-                        Client::FAILURE => __('Fraud')
+                        1 => __('Success'),
                     ],
                     'api_url' => $this->store->getBaseUrl() . 'rest/',
+                    'notify_url' => $this->store->getBaseUrl() . 'paygateway/payment/setup',
+                    'return_url' => $this->store->getBaseUrl() . 'paygateway/payment/recreate',
                 ]
             ]
         ];

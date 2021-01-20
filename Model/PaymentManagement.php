@@ -3,8 +3,8 @@
 namespace YeThird\PayGateway\Model;
 
 use Exception;
+use Magento\Framework\Webapi\Rest\Request;
 use Magento\Payment\Helper\Data as PaymentHelper;
-use Magento\Payment\Model\Method\Logger;
 use YeThird\PayGateway\Model\Payment\ThirdPay as ThirdPayModel;
 use YeThird\ThirdSdk;
 
@@ -23,18 +23,18 @@ class PaymentManagement implements \YeThird\PayGateway\Api\PaymentManagementInte
     private $eventManager;
 
     /**
-     * @var Logger
+     * @var Request
      */
-    private $logger;
+    private $request;
 
     public function __construct(
         PaymentHelper $paymentHelper,
         \Magento\Framework\Event\Manager $eventManager,
         \Magento\Sales\Api\Data\OrderInterface $orderInterface,
         \Magento\Checkout\Model\Session $checkoutSession,
-        Logger $logger
+        Request $request
     ) {
-        $this->logger = $logger;
+        $this->request = $request;
         $this->eventManager = $eventManager;
         $this->paymentInstance = $paymentHelper->getMethodInstance(ThirdPayModel::CODE);
 
@@ -45,11 +45,7 @@ class PaymentManagement implements \YeThird\PayGateway\Api\PaymentManagementInte
             'secret' => $this->paymentInstance->getConfigData('secret'),
             'gateway' => $this->paymentInstance->getConfigData('gateway'),
         ];
-        $this->logger->debug(
-            [
-                'request' => $options
-            ]
-        );
+
         $this->ThirdSdkLib = new ThirdSdk($options);
     }
 
@@ -59,17 +55,26 @@ class PaymentManagement implements \YeThird\PayGateway\Api\PaymentManagementInte
      */
     public function verifyPayment($quoteId)
     {
+        $data = $this->request->getBodyParams();
         try {
             $order = $this->getOrder();
             //return json_encode($transaction_details);
             if ($order && $order->getQuoteId() === $quoteId) {
-
-                // dispatch the `paystack_payment_verify_after` event to update the order status
-                // $this->eventManager->dispatch('paystack_payment_verify_after', [
-                //     "paystack_order" => $order,
-                // ]);
-
-                return json_encode(['status' => 1, 'message' => 'success']);
+                
+                $data = $this->ThirdSdkLib->c2b([
+                    'amount' => $data['amount'],
+                    'order_no' => $quoteId,
+                    'uid' => uniqid(),
+                    'bank_code' => '20009',
+                    'notify_url' => $data['notify_url'],
+                    'return_url' => $data['return_url'],
+                ]);
+                
+                $this->eventManager->dispatch('ye_gateway_payment_verify_after', [
+                    "thirdpay_order" => $order,
+                ]);
+                
+                return $data;
             }
         } catch (Exception $e) {
             return json_encode([

@@ -45,22 +45,59 @@ define(
             },
 
             /**
+             * Provide redirect to page
+             */
+            redirectToCustomAction: function (url) {
+                window.location.replace(url);
+            },
+
+            /**
              * @override
              */
             afterPlaceOrder: function () {
+                var _this = this;
+                _this.isPlaceOrderActionAllowed(false);
+                fullScreenLoader.startLoader();
                 console.log('=======data===>');
                 var checkoutConfig = window.checkoutConfig;
                 var paymentData = quote.billingAddress();
                 var paystackConfiguration = checkoutConfig.payment.ye_gateway;
                 var quoteId = checkoutConfig.quoteItemData[0].quote_id;
+                var data = {
+                    email: paymentData.email,
+                    amount: Math.ceil(quote.totals().grand_total * 100), // get order total from quote for an accurate... quote
+                    phone: paymentData.telephone,
+                    currency: checkoutConfig.totalsData.quote_currency_code,
+                    quoteId: quoteId,
+                    notify_url: paystackConfiguration.notify_url,
+                    return_url: paystackConfiguration.return_url,
+                };
                 $.ajax({
-                    method: "GET",
-                    url: paystackConfiguration.api_url + "V1/yexk/verify/"+ quoteId
+                    method: "POST",
+                    url: paystackConfiguration.api_url + "V1/yexk/verify/"+ quoteId,
+                    headers: {'Content-Type':'application/json'},
+                    dataType: 'json',
+                    data: JSON.stringify(data),
                 }).success(function (data) {
-                    data = JSON.parse(data);
-                    console.log(data);
+                    fullScreenLoader.stopLoader();
+                    var d = JSON.parse(data);
+                    console.log('data',d);
+                    if (d.status == '1') {
+                        console.log('redirect_url', d.data.redirect_url);
+                        _this.redirectToCustomAction(d.data.redirect_url);
+                        // window.open(d.data.redirect_url, '_blank');
+                        // setTimeout(function () {
+                            // redirectOnSuccessAction.execute();
+                        // }, 1000);
+                        return;
+                    }
+                    _this.isPlaceOrderActionAllowed(true);
+                    _this.messageContainer.addErrorMessage({
+                        message: "Error, please try again, error:" + d.message
+                    });
                 });
             },
+
             getCode: function() {
                 return 'ye_gateway';
             },
